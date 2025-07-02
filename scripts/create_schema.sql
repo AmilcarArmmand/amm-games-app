@@ -1,13 +1,13 @@
 -- MySQL script that creates the database
 
 -- Drop database if it exists
-drop database if exists amm_games;
+drop database if exists amm_games_db;
 
 -- create
-create database if not exists amm_games;
+create database if not exists amm_games_db;
 
 -- set database server to active
-use amm_games;
+use amm_games_db;
 
 -- drop tables if they exist (reverse order)
 drop table if exists product_budget;
@@ -38,14 +38,14 @@ drop table if exists person;
 -- create the user table
 create table person (
        user_id           int auto_increment,
-       email            varchar(255),
-       name             varchar(255) not null,
-       password_hash    varchar(255) not null,
+       email              varchar(255),
+       username          varchar(255) not null,
+       password      varchar(255) not null,
        first_name       varchar(50) not null,
        last_name        varchar(50) not null,
        phone_number     varchar(15),
        date_registered  datetime not null,
-       is_active        tiny not null default 1,
+       is_active        boolean not null default 1,
        primary key (user_id)
        );
 
