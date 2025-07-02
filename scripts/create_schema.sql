@@ -29,10 +29,10 @@ drop table if exists category;
 drop table if exists customer;
 drop table if exists location_staff;
 drop table if exists manages;
-drop table if exists locations;
 drop table if exists manager;
 drop table if exists admin;
 drop table if exists employees;
+drop table if exists locations;
 drop table if exists person;
 
 -- create the user table
@@ -49,10 +49,18 @@ create table person (
        primary key (user_id)
        );
 
+create table locations (
+       location_id         int auto_increment,
+       address             varchar(255),
+       storage_capacity    int,
+       primary key (location_id)
+       );
+
 -- create the table employee
 create table employees (
        user_id          int,
        employee_id      int auto_increment,
+       salary           decimal(10,2),
        primary key (employee_id),
        foreign key (user_id) references person (user_id)
        );
@@ -69,22 +77,15 @@ create table admin (
 create table manager (
        manager_id        int auto_increment,
        employee_id       int,
-       user_id           int,
-       salary            numeric(10, 2),
+       hire_date         date,
        primary key (manager_id),
-       foreign key (employee_id) references employees (employee_id),
-       foreign key (user_id) references person (user_id)
+       foreign key (employee_id) references employees (employee_id)
        );
 
-create table locations (
-       location_id         int auto_increment,
-       phone_number        int(12),
-       primary key (location_id)
-       );
 
 create table manages (
-       manager_id       int auto_increment,
-       location_id         int,
+       manager_id        int,
+       location_id       int,
        primary key (manager_id, location_id),
        foreign key (manager_id) references manager (manager_id),
        foreign key (location_id) references locations (location_id)
@@ -104,6 +105,7 @@ create table customer (
        customer_id       int auto_increment,
        user_id           int,
        date_of_birth     date,
+       join_date         date,
        primary key (customer_id),
        foreign key (user_id) references person (user_id)
        );
@@ -125,7 +127,7 @@ create table genre (
 -- create the product table
 create table product (
        product_id        int auto_increment,
-       upc_code          int,
+       upc_code          numeric(10),
        product_name      varchar(255),
        description       varchar(255),
        platform          varchar(50),
