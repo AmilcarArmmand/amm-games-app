@@ -32,20 +32,21 @@ drop table if exists manages;
 drop table if exists manager;
 drop table if exists admin;
 drop table if exists employees;
+drop table if exists user_type;
 drop table if exists locations;
 drop table if exists person;
 
 -- create the user table
 create table person (
        user_id           int auto_increment,
-       email              varchar(255),
+       email             varchar(255),
        username          varchar(255) not null,
-       password      varchar(255) not null,
-       first_name       varchar(50) not null,
-       last_name        varchar(50) not null,
-       phone_number     varchar(15),
-       date_registered  datetime not null,
-       is_active        boolean not null default 1,
+       password          varchar(255) not null,
+       first_name        varchar(50) not null,
+       last_name         varchar(50) not null,
+       phone_number      varchar(15),
+       date_registered   datetime not null,
+       is_active         boolean not null default 1,
        primary key (user_id)
        );
 
@@ -56,12 +57,21 @@ create table locations (
        primary key (location_id)
        );
 
+-- create job description types
+create table user_type (
+       user_type       varchar(255) not null unique,
+       primary key (user_type)
+       );
+
 -- create the table employee
 create table employees (
        user_id          int,
        employee_id      int auto_increment,
+       position         varchar(255)
+       check (position in ('clerk', 'manager', 'sysadmin')),
        salary           decimal(10,2),
        primary key (employee_id),
+       foreign key (position) references user_type (user_type),
        foreign key (user_id) references person (user_id)
        );
 
@@ -106,8 +116,11 @@ create table customer (
        user_id           int,
        date_of_birth     date,
        join_date         date,
+       user_type         varchar(255)
+       check ( user_type in ('customer')),
        primary key (customer_id),
-       foreign key (user_id) references person (user_id)
+       foreign key (user_id) references person (user_id),
+       foreign key (user_type) references user_type (user_type)
        );
 
 -- create the category table

@@ -3,6 +3,7 @@ use amm_games_db;
 
 -- make sure that tables are empty
 delete from person;
+delete from user_type;
 delete from product_budget;
 delete from inventory;
 delete from participant;
@@ -38,6 +39,13 @@ values ('admin1@example.com', 'admin1', 'adminpass1', 'John', 'Doe', '1234567890
        ('staff2@example.com', 'staff2', 'staffpass2', 'Emily', 'Davis', '6789012345', NOW(), 1),
        ('customer1@example.com', 'customer1', 'customerpass1', 'Sarah', 'Wilson', '7890123456', NOW(), 1),
        ('customer2@example.com', 'customer2', 'customerpass2', 'David', 'Taylor', '8901234567', NOW(), 1);
+
+
+insert into user_type (user_type)
+values ('customer'),
+       ('clerk'),
+       ('sysadmin'),
+       ('manager');
 
 
 -- Insert into employees
