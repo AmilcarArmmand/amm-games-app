@@ -1,9 +1,9 @@
 <?php
 /* database server configuration */
 $DB_HOST = 'localhost';
-$DB_USER = 'vagrant';
-$DB_PASS = 'vagrant';
-$DB_NAME = 'amm_games_db';
+$DB_USER = 'vagrant';  // change to `root` as needed
+$DB_PASS = 'vagrant';  // change to ''
+$DB_NAME = 'amm_games_db';  // not needed of creating test database TODO
 
 // Error reporting
 error_reporting(E_ALL);
