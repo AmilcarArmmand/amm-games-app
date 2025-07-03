@@ -17,33 +17,7 @@ function db_connect() {
 }
 
 
-function attempt_login($email, $password) {
-    $conn = db_connect();
-
-    $query = "SELECT p.email, p.password, e.position
-              FROM person p
-              LEFT JOIN employees e ON p.user_id = e.user_id
-              WHERE p.email = ? AND p.is_active = 1";
-
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['logged_in'] = true;
-            $_SESSION['user_type'] = $user['position'] ?? 'customer';
-            return true;
-        }
-    }
-
-    $conn->close();
-    return false;
-}
-
+/*
 function is_logged_in() {
     return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 }
@@ -58,4 +32,6 @@ function redirect_if_not_logged_in() {
 function get_user_type() {
     return $_SESSION['user_type'] ?? null;
 }
+*/
+
 ?>
