@@ -1,3 +1,13 @@
+<?php
+require_once '../includes/config.php';
+require_once '../includes/auth.php';
+
+redirect_if_not_logged_in();
+
+if (get_user_type() !== 'manager') {
+    header("Location: ../login.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -8,27 +18,6 @@
 <body>
     <h1>Manager Dashboard</h1>
     <p>Welcome, Manager</p>
-
-    <h2>Management Tools</h2>
-    <ul>
-        <li><a href="#">View Inventory</a></li>
-        <li><a href="#">Staff Management</a></li>
-        <li><a href="#">Sales Reports</a></li>
-    </ul>
-
     <p><a href="../logout.php">Logout</a></p>
 </body>
 </html>
-```
-
-### 6. Updated logout.php
-```php
-<?php
-include '../includes/config.php';
-include '../includes/auth.php';
-
-session_unset();
-session_destroy();
-header("Location: login.php");
-exit;
-?>

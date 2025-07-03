@@ -4,20 +4,20 @@ include '../includes/config.php';
 
 redirect_if_not_logged_in();
 
-if (get_user_type() !== 'admin') {
-    header("Location: login.php");
+if (get_user_type() !== 'sysadmin') {
+    header("Location: ../login.php");
     exit;
 }
 ?>
 
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>Admin Dashboard</title>
 </head>
 <body>
     <h1>Admin Dashboard</h1>
-    <p>Welcome, Administrator</p>
+    <p>Welcome, SYSAdminr</p>
 
     <h2>Admin Tools</h2>
     <ul>

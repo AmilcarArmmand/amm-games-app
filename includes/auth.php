@@ -1,38 +1,46 @@
+
+
 <?php
 include 'config.php';
 
 function db_connect() {
 
+    /* Create connection using global variables  */
     $conn = @new mysqli($GLOBALS['DB_HOST'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASS'], $GLOBALS['DB_NAME']);
-    //  $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
+    /* Check connection */
     if ($conn->connect_error) {
-        die("Connection failed: " . $conn_.connect_error);
+        die("Connection failed: " . $conn->connect_error);
     }
 
     return $conn;
 }
 
 
-function attempt_login($username, $password) {
+function attempt_login($email, $password) {
     $conn = db_connect();
 
-    $query = "SELECT user_id, password FROM person WHERE username = ? AND is_active = 1";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "s", $username);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+    $query = "SELECT p.email, p.password, e.position
+              FROM person p
+              LEFT JOIN employees e ON p.user_id = e.user_id
+              WHERE p.email = ? AND p.is_active = 1";
 
-    if (mysqli_num_rows($result) == 1) {
-        $user = mysqli_fetch_assoc($result);
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['logged_in'] = true;
+            $_SESSION['user_type'] = $user['position'] ?? 'customer';
             return true;
         }
     }
 
-    mysqli_close($conn);
+    $conn->close();
     return false;
 }
 
@@ -45,5 +53,9 @@ function redirect_if_not_logged_in() {
         header("Location: login.php");
         exit;
     }
+}
+
+function get_user_type() {
+    return $_SESSION['user_type'] ?? null;
 }
 ?>
