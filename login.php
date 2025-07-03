@@ -3,48 +3,85 @@ require_once 'includes/config.php';
 require_once 'includes/auth.php';
 
 $error = '';
+$nameErr = $emailErr = $passErr  = "";
+$name = $email = $comment = "";
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
-
-    if (attempt_login($username, $password)) {
-        // Check user type and redirect accordingly
-        $conn = db_connect();
-        $user_id = $_SESSION['user_id'];
-
-        // Check if admin
-        $admin_check = mysqli_query($conn,
-            "SELECT a.admin_id FROM admin a
-             JOIN employees e ON a.employee_id = e.employee_id
-             WHERE e.user_id = $user_id");
-
-        // Check if customer
-        $customer_check = mysqli_query($conn,
-            "SELECT customer_id FROM customer WHERE user_id = $user_id");
-
-        if (mysqli_num_rows($admin_check) > 0) {
-            header("Location: dashboard.php?type=admin");
-        } elseif (mysqli_num_rows($customer_check) > 0) {
-            header("Location: dashboard.php?type=customer");
-        } else {
-            header("Location: dashboard.php");
-        }
-        exit;
-    } else {
-        $error = "Invalid username or password";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["username"])) {
+    $nameErr = "Name is required";
+  } else {
+    $username = test_input($_POST["username"]);
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$username)) {
+      $nameErr = "Only letters and white space allowed";
     }
+  }
+
+  if (empty($_POST["email"])) {
+    $emailErr = "Email is required";
+  } else {
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $emailErr = "Invalid email format";
+    }
+  }
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (empty($_POST["password"])) {
+    $passErr = "Password is required";
+  } else {
+    $password = test_input($_POST["password"]);
+  }
+  }
+
+  if (attempt_login($username, $password)) {
+
+      /* Get user type from session (set during login) */
+      $user_type = $_SESSION['user_type'];
+
+      /* Redirect based on user type */
+      switch($user_type) {
+      case 'admin':
+          header("Location: dashboards/admin.php");
+          break;
+      case 'manager':
+          header("Location: dashboards/manager.php");
+          break;
+      case 'clerk':
+          header("Location: dashboards/staff.php");
+          break;
+      case 'customer':
+          header("Location: dashboards/customer.php");
+          break;
+      default:
+          header("Location: dashboards/customer.php"); // Default fallback
+      }
+      exit;
+  } else {
+      $error = "Invalid username or password";
+  }
+
 }
+function test_input($data) {
+  $data = trim($data);
+  $data = stripslashes($data);
+  $data = htmlspecialchars($data);
+  return $data;
+}
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Login - AMM Games</title>
+    <style>
+    .error {color: #FF0000;}
+    </style>
 </head>
 <body>
     <h1>Login</h1>
-
     <?php if ($error): ?>
         <p><font color="red"><?php echo htmlspecialchars($error); ?></font></p>
     <?php endif; ?>
@@ -64,5 +101,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </tr>
         </table>
     </form>
+
+<h2>PHP Form Validation Example</h2>
+<p><span class="error">* required field</span></p>
+<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+  Name: <input type="text" name="name" value="<?php echo $name;?>">
+  <span class="error">* <?php echo $nameErr;?></span>
+  <br><br>
+  E-mail: <input type="text" name="email" value="<?php echo $email;?>">
+  <span class="error">* <?php echo $emailErr;?></span>
+  <br><br>
+
+
+  <br><br>
+
+  <br><br>
+
+  <br><br>
+  <input type="submit" name="submit" value="Submit">
+</form>
+
+<?php
+echo "<h2>Your Input:</h2>";
+echo $name;
+echo "<br>";
+echo $email;
+echo "<br>";
+
+echo "<br>";
+
+echo "<br>";
+
+?>
+
 </body>
 </html>
