@@ -1,13 +1,18 @@
 <?php
-require_once 'config.php';
+include 'config.php';
 
 function db_connect() {
-    $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
+
+    $conn = @new mysqli($GLOBALS['DB_HOST'], $GLOBALS['DB_USER'], $GLOBALS['DB_PASS'], $GLOBALS['DB_NAME']);
+    //  $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn_.connect_error);
     }
+
     return $conn;
 }
+
 
 function attempt_login($username, $password) {
     $conn = db_connect();
