@@ -46,6 +46,7 @@ create table person (
        last_name         varchar(50) not null,
        phone_number      varchar(15),
        date_registered   datetime not null,
+       last_login        datetime not null,
        is_active         boolean not null default 1,
        primary key (user_id),
        INDEX idx_person_email (email),
